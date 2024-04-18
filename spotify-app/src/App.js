@@ -8,7 +8,7 @@ import './App.css';
 function App() {
   const [accessToken, setAccessToken] = useState('');
 
-  // Replace 'YOUR_CLIENT_ID' and 'YOUR_CLIENT_SECRET' with your actual Spotify API credentials
+
   const clientId = 'ecec0dc55cbf430bbd3eb333f30573fb';
   const clientSecret = '6f702e0266b641c187aa50e2507378bd';
 
