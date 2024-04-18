@@ -1,0 +1,20 @@
+*{
+  background-color: #080410;
+  color: #E3DEF7;
+  font-family: ;
+}
+.App {
+  text-align: center;
+}
+
+
+li{
+  list-style: none;
+}
+ul{
+  display: flex;
+  justify-content: right;
+  padding-bottom: 75px;
+  gap: 60px;
+  padding-right: 35px;
+}
