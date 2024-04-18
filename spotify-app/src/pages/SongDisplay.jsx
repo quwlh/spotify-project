@@ -11,7 +11,7 @@ function SongDisplay({ accessToken }) {
 
     const fetchSongInfo = async () => {
       try {
-        const response = await fetch('https://api.spotify.com/v1/tracks/1CkvWZme3pRgbzaxZnTl5X', {
+        const response = await fetch('https://api.spotify.com/v1/tracks/0FE9t6xYkqWXU2ahLh6D8X', {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }
@@ -51,6 +51,7 @@ function SongDisplay({ accessToken }) {
         <p>Album: {songInfo.album.name}</p>
         <p>Release Date: {songInfo.album.release_date}</p>
         <img src={songInfo.album.images[0].url} alt="Album Cover" />
+        <div dangerouslySetInnerHTML={{ __html: `<iframe src="https://open.spotify.com/embed/track/${songInfo.id}" width="400" height="100" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>` }}></div>
       </div>
 
       <div>

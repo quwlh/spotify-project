@@ -40,7 +40,7 @@ function App() {
     <>
       <nav>
         <ul>
-          <input type="text" placeholder='Search'/> 
+          <input type="text" placeholder='Search' style={{borderRadius: '4px', backgroundColor: '#E3DEF7', color: '#080410'}}/> 
           <li><Link to="/">Home</Link></li>
           <li><Link to="/Browse">Browse</Link></li>
           <li><Link to="/SongDisplay">SongDisplay</Link></li>

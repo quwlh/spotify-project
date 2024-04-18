@@ -1,7 +1,7 @@
-*{
+body{
   background-color: #080410;
   color: #E3DEF7;
-  font-family: ;
+  scroll-behavior: smooth;
 }
 .App {
   text-align: center;
