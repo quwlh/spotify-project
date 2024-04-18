@@ -3,14 +3,13 @@ import { Link } from 'react-router-dom';
 
 function SongDisplay({ accessToken }) {
   const [songInfo, setSongInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!accessToken) return; 
 
     const fetchSongInfo = async () => {
       try {
-        const response = await fetch('https://api.spotify.com/v1/tracks/0FE9t6xYkqWXU2ahLh6D8X', {
+        const response = await fetch('https://api.spotify.com/v1/tracks/5TMGf0iNjOVLOgBf9vgq2O?si=b970c51572814c88', {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }
@@ -22,18 +21,16 @@ function SongDisplay({ accessToken }) {
         setSongInfo(data);
       } catch (error) {
         console.error('Error fetching song information:', error);
-      } finally {
-        setLoading(false); 
       }
     };
 
     fetchSongInfo();
   }, [accessToken]);
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if (!songInfo) {
+    return <div>No song information available</div>;
   }
-  
+
   return (
     <>
       <div>
@@ -45,22 +42,7 @@ function SongDisplay({ accessToken }) {
         <div dangerouslySetInnerHTML={{ __html: `<iframe src="https://open.spotify.com/embed/track/${songInfo.id}" width="400" height="100" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>` }}></div>
       </div>
 
-      <div>
-        <h1 style={{ textAlign: 'center' }}>More Like This</h1>
-        <div className='boxes-containers' style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div className='1'>
-            <h3>Name</h3>
-            <Link to="/SongDisplay">
-              <a>Get started</a>
-            </Link>
-            <p>Description</p>
-          </div>
-          <div className='2'></div>
-          <h2>Second</h2>
-          <div className='3'></div>
-          <h2>Third</h2>
-        </div>
-      </div>
+      
     </>
   );
 }
