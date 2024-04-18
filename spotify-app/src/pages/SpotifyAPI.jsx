@@ -26,18 +26,18 @@ function SpotifyAPI({ clientId, clientSecret }) {
 
     fetchAccessToken();
 
-    // Refresh access token every 50 minutes (before it expires)
+   
     const refreshTokenInterval = setInterval(fetchAccessToken, 3000000);
 
-    // Clear interval on component unmount
+   
     return () => clearInterval(refreshTokenInterval);
   }, [clientId, clientSecret]);
 
   useEffect(() => {
-    console.log('Access Token:', accessToken); // Log access token for debugging
-  }, [accessToken]); // Log whenever accessToken changes
+    console.log('Access Token:', accessToken); 
+  }, [accessToken]); 
 
-  return <>{accessToken}</>; // For testing purposes, render access token
+  return <>{accessToken}</>; 
 }
 
 export default SpotifyAPI;

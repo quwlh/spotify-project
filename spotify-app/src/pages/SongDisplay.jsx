@@ -4,10 +4,9 @@ import { Link } from 'react-router-dom';
 function SongDisplay({ accessToken }) {
   const [songInfo, setSongInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!accessToken) return; // Exit early if accessToken is not available
+    if (!accessToken) return; 
 
     const fetchSongInfo = async () => {
       try {
@@ -22,9 +21,9 @@ function SongDisplay({ accessToken }) {
         const data = await response.json();
         setSongInfo(data);
       } catch (error) {
-        setError(error.message); // Set error state if fetching fails
+        console.error('Error fetching song information:', error);
       } finally {
-        setLoading(false); // Set loading to false whether request succeeds or fails
+        setLoading(false); 
       }
     };
 
@@ -34,15 +33,7 @@ function SongDisplay({ accessToken }) {
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  if (error) {
-    return <div>Error: {error}</div>; // Display error message if there's an error
-  }
-
-  if (!songInfo) {
-    return <div>No song information available</div>;
-  }
-
+  
   return (
     <>
       <div>
