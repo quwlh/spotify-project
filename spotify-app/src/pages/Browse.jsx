@@ -1,146 +1,131 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-function Browse() {
-  const genres = ['Pop', 'Rock', 'Hip Hop', 'Electronic']; 
-  const subgenres = {
-    Pop: ['Sub Genre 1', 'Sub Genre 2', 'Sub Genre 3', 'Sub Genre 4', 'Sub Genre 5', 'Sub Genre 6'],
-    Rock: ['Sub Genre 7', 'Sub Genre 8', 'Sub Genre 9', 'Sub Genre 10', 'Sub Genre 11', 'Sub Genre 12'],
-    'Hip Hop': ['Sub Genre 13', 'Sub Genre 14', 'Sub Genre 15', 'Sub Genre 16', 'Sub Genre 17', 'Sub Genre 18'],
-    Electronic: ['Sub Genre 19', 'Sub Genre 20', 'Sub Genre 21', 'Sub Genre 22', 'Sub Genre 23', 'Sub Genre 24']
-  }; 
+function Browse({ accessToken }) {
+  const [genres, setGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState(null);
+  const [subgenres, setSubgenres] = useState([]);
+  const [currentPageGenres, setCurrentPageGenres] = useState(0);
+  const [currentPageSubgenres, setCurrentPageSubgenres] = useState(0);
 
-  const [selectedGenreIndex, setSelectedGenreIndex] = useState(0);
-  const selectedGenre = genres[selectedGenreIndex]; 
+  useEffect(() => {
+    fetchGenres();
+  }, [accessToken]);
 
-  const [selectedSubgenres, setSelectedSubgenres] = useState([]); 
-
-  const handleLeftGenreClick = () => {
-    setSelectedGenreIndex(prevIndex => (prevIndex === 0 ? genres.length - 1 : prevIndex - 1));
-    setSelectedSubgenres([]); 
+  const fetchGenres = async () => {
+    try {
+      let allGenres = [];
+      let nextUrl = 'https://api.spotify.com/v1/browse/categories';
+      while (nextUrl) {
+        const response = await axios.get(nextUrl, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+        allGenres = [...allGenres, ...response.data.categories.items];
+        nextUrl = response.data.categories.next; // Next page URL
+      }
+      setGenres(allGenres);
+    } catch (error) {
+      console.error('Error fetching genres:', error);
+    }
   };
 
-  const handleRightGenreClick = () => {
-    setSelectedGenreIndex(prevIndex => (prevIndex === genres.length - 1 ? 0 : prevIndex + 1));
-    setSelectedSubgenres([]); 
+  const fetchSubgenres = async (genreId) => {
+    try {
+      let allSubgenres = [];
+      let nextUrl = `https://api.spotify.com/v1/browse/categories/${genreId}/playlists`;
+      while (nextUrl) {
+        const response = await axios.get(nextUrl, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+        allSubgenres = [...allSubgenres, ...response.data.playlists.items];
+        nextUrl = response.data.playlists.next; // Next page URL
+      }
+      setSubgenres(allSubgenres);
+    } catch (error) {
+      console.error('Error fetching subgenres:', error);
+    }
   };
 
-  const handleSubgenreChange = (subgenre) => {
-    if (selectedSubgenres.includes(subgenre)) {
-      setSelectedSubgenres(selectedSubgenres.filter(sg => sg !== subgenre));
-    } else {
-      setSelectedSubgenres([...selectedSubgenres, subgenre]);
+  const handleGenreClick = async (genreId) => {
+    setSelectedGenre(genreId);
+    setCurrentPageSubgenres(0); // Reset subgenres page
+    await fetchSubgenres(genreId);
+  };
+
+  const handlePreviousPageGenres = () => {
+    if (currentPageGenres > 0) {
+      setCurrentPageGenres(currentPageGenres - 1);
+    }
+  };
+
+  const handleNextPageGenres = () => {
+    if ((currentPageGenres + 1) * 10 < genres.length) {
+      setCurrentPageGenres(currentPageGenres + 1);
     }
   };
 
   return (
-    <>  
-      <div style={{textAlign: 'center'}}>
+    <div>
       <h1>Browse</h1>
-      <input type="text" placeholder='Search'/> 
+      <h2>Genres</h2>
+      <div>
+        <button onClick={handlePreviousPageGenres}>&#60;</button>
+        {genres.slice(currentPageGenres * 10, (currentPageGenres + 1) * 10).map(genre => (
+          <button key={genre.id} onClick={() => handleGenreClick(genre.id)}>{genre.name}</button>
+        ))}
+        <button onClick={handleNextPageGenres}>&#62;</button>
       </div>
-    
-      <div className='filter-section'  style={{textAlign: 'center'}}>
-  <div>
-    <button onClick={handleLeftGenreClick}>left</button>
-    <span>{selectedGenre}</span>
-    <button onClick={handleRightGenreClick}>right</button>
-  </div>
-
-  <div>
-
-    {subgenres[selectedGenre].map((subgenre, index) => (
-          <label key={index}>
-            <input
-              type="checkbox"
-              name={subgenre}
-              value={subgenre}
-              checked={selectedSubgenres.includes(subgenre)}
-              onChange={() => handleSubgenreChange(subgenre)}
-            />
-            {subgenre}
-          </label>
-    ))}
-   
-  </div>
-</div>
-
-    <div style={{ display: 'flex', flexWrap: 'wrap', textAlign: 'center'}}>
-    
-      <div style={{ display: 'flex', flexBasis: '100%', }}>
-       
-        <div style={{ width: '33.33%', padding: '10px', boxSizing: 'border-box' }}>
-          <h3>Name</h3>
-          <Link to="/SongDisplay">
-            <a>Song</a>
-          </Link>
-          <p>Description</p>
-        </div>
-
-     
-        <div style={{ width: '33.33%', padding: '10px', boxSizing: 'border-box' }}>
-          <h3>Name</h3>
-          <Link to="/SongDisplay">
-            <a>Song</a>
-          </Link>
-          <p>Description</p>
-          <p>Description</p>
-        </div>
-
-        
-        <div style={{ width: '33.33%', padding: '10px', boxSizing: 'border-box' }}>
-          <h3>Name</h3>
-          <Link to="/SongDisplay">
-            <a>Song</a>
-          </Link>
-          <p>Description</p>
-          <p>Description</p>
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', flexBasis: '100%' }}>
-       
-        <div style={{ width: '33.33%', padding: '10px', boxSizing: 'border-box' }}>
-          <h3>Name</h3>
-          <Link to="/SongDisplay">
-            <a>Song</a>
-          </Link>
-          <p>Description</p>
-          <p>Description</p>
-        </div>
-
-        
-        <div style={{ width: '33.33%', padding: '10px', boxSizing: 'border-box' }}>
-          <h3>Name</h3>
-          <Link to="/SongDisplay">
-            <a>Song</a>
-          </Link>
-          <p>Description</p>
-          <p>Description</p>
-        </div>
-
-       
-        <div style={{ width: '33.33%', padding: '10px', boxSizing: 'border-box' }}>
-          <h3>Name</h3>
-          <Link to="/SongDisplay">
-            <a>Song</a>
-          </Link>
-          <p>Description</p>
-          <p>Description</p>
-        </div>
-      </div>
-
+      {selectedGenre && (
+        <>
+          <h2>Subgenres</h2>
+          <div>
+            {subgenres.slice(currentPageSubgenres * 10, (currentPageSubgenres + 1) * 10).map(subgenre => (
+              <div key={subgenre.id}>
+                <h3>{subgenre.name}</h3>
+                <SongsList accessToken={accessToken} playlistId={subgenre.id} />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
-    
-    
-    <footer>
-    <div style={{ height: '2px', backgroundColor: 'black', margin: '10px 0' }}></div>
-      <p>footer</p>
-    </footer>
-    </>
-    
-    
-  )
+  );
 }
 
-export default Browse
+const SongsList = ({ accessToken, playlistId }) => {
+  const [songs, setSongs] = useState([]);
+
+  useEffect(() => {
+    fetchSongs();
+  }, [accessToken, playlistId]);
+
+  const fetchSongs = async () => {
+    try {
+      const response = await axios.get(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      setSongs(response.data.items);
+    } catch (error) {
+      console.error('Error fetching songs:', error);
+    }
+  };
+
+  return (
+    <ul>
+      {songs.map(song => (
+        <li key={song.track.id}>
+          <Link to={`/SongDisplay/${song.track.id}`}>{song.track.name}</Link>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export default Browse;
