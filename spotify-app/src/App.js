@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Browse from './pages/Browse';
+import Faq from './pages/Faq';
 import SongDisplay from './pages/SongDisplay';
 import './App.css';
 
@@ -45,19 +46,25 @@ function App() {
 
   return (
     <>
-      <nav>
-        <ul>
-          <input type="text" placeholder='Search' style={{borderRadius: '4px', backgroundColor: '#E3DEF7', color: '#080410'}}/> 
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/Browse">Browse</Link></li>
-          {/* Remove the link to SongDisplay from the navigation */}
+      <nav style={{ display: 'flex', alignItems: 'center', paddingBottom: '10px', paddingTop: '20px', justifyContent: 'center' }}>
+        <ul style={{ listStyleType: 'none', margin: 0, padding: 0, display: 'flex', gap: '200px', fontSize: '26px',}}>
+          <li style={{}}>
+            <Link to="/" style={{ textDecoration: 'none' }}>Home </Link>
+          </li>
+          <li style={{}}>
+            <Link to="/Browse" style={{ textDecoration: 'none' }}>Browse</Link>
+          </li>
+          
         </ul>
       </nav>
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/Browse" element={<Browse accessToken={accessToken} handleSubgenreClick={handleSubgenreClick} />} />
         <Route path="/SongDisplay/:id" element={<SongDisplay accessToken={accessToken} />} />
+        
       </Routes>
+
     </>
   );
 }
